@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+python-multipart
+pydantic
+pdfplumber
+pytesseract
+pillow
+google-generativeai
+firebase-admin
