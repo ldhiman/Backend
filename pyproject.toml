@@ -1,2 +1,7 @@
-[tool.uv]
-system-python = true
+[project]
+name = "gstlens-backend"
+version = "0.1.0"
+description = "GSTLens FastAPI backend"
+requires-python = ">=3.11,<3.12"
+
+dependencies = []
