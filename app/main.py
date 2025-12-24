@@ -28,7 +28,7 @@ app.include_router(sync.router)
 app.include_router(payments.router)
 
 
-MAX_FILE_SIZE = 1 * 1024 * 1024  # 4MB (Vercel limit is ~4.5MB)
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
 
 
 @app.get("/")
