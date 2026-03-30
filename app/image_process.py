@@ -13,14 +13,17 @@ client = genai.Client(api_key=settings.GEMINI_API_KEY)
 from pydantic import BaseModel
 from typing import Optional, Literal
 
+class FieldWithConfidence(BaseModel):
+    value: Optional[str | float]
+    confidence: float
+
 class InvoiceData(BaseModel):
-    invoice_number: Optional[str]
-    invoice_date: Optional[str]
-    seller_gstin: Optional[str]
-    buyer_gstin: Optional[str]
+    invoice_number: Optional[FieldWithConfidence]
+    invoice_date: Optional[FieldWithConfidence]
+    seller_gstin: Optional[FieldWithConfidence]
+    buyer_gstin: Optional[FieldWithConfidence]
     invoice_type: Literal["B2B", "B2C"]
     pos: Optional[str]
-    taxable_value_before_discount: Optional[float]
     taxable_value: Optional[float]
     cgst: Optional[float]
     sgst: Optional[float]
@@ -29,18 +32,23 @@ class InvoiceData(BaseModel):
 
 
 SYSTEM_PROMPT = """
-You are a GST invoice extraction system.
+You are a highly accurate GST invoice extraction system.
 
-Rules:
-- Extract ONLY the fields defined in the schema
-- If a field is missing, return null (JSON null)
-- Do NOT guess values
-- Do NOT calculate anything
-- Dates must be in DD.MM.YYYY format
-- invoice_type:
-    - B2B if buyer_gstin exists
-    - B2C otherwise
-- Output ONLY valid JSON
+STRICT RULES:
+- Extract ONLY visible data from the document
+- DO NOT infer or calculate values
+- If unsure, return null
+- GSTIN must be exactly 15 characters
+- All monetary values must be numbers (no symbols)
+- Dates must be DD.MM.YYYY format
+- If multiple invoices exist, return an array
+
+LOGIC:
+- invoice_type = "B2B" if buyer_gstin exists, else "B2C"
+
+OUTPUT:
+- Return ONLY valid JSON matching schema
+- No explanation, no extra text
 """
 
 def extract_invoice_data(file_bytes: bytes, mime_type: str):

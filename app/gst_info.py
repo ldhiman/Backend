@@ -1,7 +1,7 @@
 import requests
 
 def get_gst_info_1(gstin: str):
-    url = f"https://blog-backend.mastersindia.co/api/v1/custom/search/gstin/?keyword={gstin}&unique_id=1"
+    url = f"https://blog-backend.mastersindia.co/api/v1/custom/search/gstin/?keyword={gstin}&unique_id=7jfRGwv8SVkxCTvYXLwyHO4HUYiQRL"
 
     headers = {
     'accept': 'application/json, text/plain, */*',
@@ -27,27 +27,34 @@ def get_gst_info_1(gstin: str):
 
 def get_gst_info_2(gstin: str):
 
-    url = f"https://tools.signalx.ai/apps/gst-verification/gstin-overview/{gstin}"
+
+    url = f"https://api.cashfree.com/verification/marketing/gstin"
 
     headers = {
+    
     'accept': 'application/json, text/plain, */*',
     'accept-language': 'en-US,en;q=0.9,hi;q=0.8',
     'cache-control': 'no-cache',
+    'content-type': 'application/json',
+    'origin': 'https://www.cashfree.com',
     'dnt': '1',
     'pragma': 'no-cache',
     'priority': 'u=1, i',
-    'referer': 'https://tools.signalx.ai/gstin-verification/07AAACU4747P1ZR',
-    'sec-ch-ua': '"Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24"',
+    'referer': 'https://www.cashfree.com/',
+    'sec-ch-ua': '"Google Chrome";v="146", "Chromium";v="146", "Not A(Brand";v="24"',
     'sec-ch-ua-mobile': '?0',
     'sec-ch-ua-platform': '"Windows"',
     'sec-fetch-dest': 'empty',
     'sec-fetch-mode': 'cors',
-    'sec-fetch-site': 'same-origin',
+    'sec-fetch-site': 'same-site',
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
-    'Cookie': '_ga=GA1.1.1172065132.1766063675; _clck=qtf00r%5E2%5Eg1y%5E0%5E2178; _clsk=3tedx7%5E1766063679480%5E1%5E1%5Ej.clarity.ms%2Fcollect; messagesUtk=ea9165107b1c478aa6f21dd3edc9001d; _gcl_au=1.1.1101140264.1766063680; __hstc=219074118.b4199f4f72d7420782743b75d6e6d2c6.1766063680243.1766063680243.1766063680243.1; hubspotutk=b4199f4f72d7420782743b75d6e6d2c6; __hssrc=1; __hssc=219074118.1.1766063680243; _ga_RN3LXLE8J3=GS2.1.s1766063675$o1$g0$t1766063686$j49$l0$h0; _ga_YZEDDY0L1W=GS2.1.s1766063675$o1$g0$t1766063686$j49$l0$h0'
     }
 
-    response = requests.request("GET", url, headers=headers)
+    data = {
+    "GSTIN":gstin
+    }
+
+    response = requests.request("POST", url, headers=headers, json=data)
 
     return response.json()
 
@@ -903,9 +910,9 @@ def get_gst_info(gstin: str):
     
     return {
         "gstin": gstin,
-        "legal_name": data2.get("legal_business_name") or s1_data.get("lgnm"),
-        "trade_name": data2.get("trade_name") or s1_data.get("tradeNam"),
-        "status": data2.get("gstin_uin_status") or s1_data.get("sts") ,
+        "legal_name": data2.get("trade_name_of_business") or s1_data.get("lgnm"),
+        "trade_name": data2.get("legal_name_of_business") or s1_data.get("tradeNam"),
+        "status": data2.get("gstin_in_status") or s1_data.get("sts") ,
         "constitution": s1_data.get("ctb") or data2.get("constitution_of_business"),
         # "principal_address": s1_data.get("pradr", {}).get("addr", {}),
         "state_code": gstin[:2],
